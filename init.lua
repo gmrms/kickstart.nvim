@@ -241,6 +241,9 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+  -- NOTE: Themes setup
+  { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
+
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
@@ -422,6 +425,22 @@ require('lazy').setup({
   -- A neovim plugin to persist and toggle multiple terminals during an editing session
   { 'akinsho/toggleterm.nvim', version = '*', config = true },
 
+  {
+    'nvim-tree/nvim-tree.lua',
+    version = '*',
+    lazy = false,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('nvim-tree').setup {
+        view = {
+          side = 'right',
+        },
+      }
+    end,
+  },
+
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -600,6 +619,11 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        -- Kotlin
+        'kotlin-language-server',
+        'kotlin-debug-adapter',
+        'ktlint',
+        'detekt',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -892,3 +916,5 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+vim.cmd.colorscheme 'catppuccin-mocha'
