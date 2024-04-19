@@ -152,7 +152,9 @@ vim.opt.inccommand = 'split'
 vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 10
+vim.opt.scrolloff = 20
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -241,6 +243,28 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+  -- A neovim plugin to persist and toggle multiple terminals during an editing session
+  { 'akinsho/toggleterm.nvim', version = '*', config = true },
+
+  {
+    'nvim-tree/nvim-tree.lua',
+    version = '*',
+    lazy = false,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('nvim-tree').setup {
+        view = {
+          side = 'right',
+        },
+        renderer = {
+          group_empty = true,
+        },
+      }
+    end,
+  },
+
   -- NOTE: Themes setup
   { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
 
@@ -422,25 +446,6 @@ require('lazy').setup({
     end,
   },
 
-  -- A neovim plugin to persist and toggle multiple terminals during an editing session
-  { 'akinsho/toggleterm.nvim', version = '*', config = true },
-
-  {
-    'nvim-tree/nvim-tree.lua',
-    version = '*',
-    lazy = false,
-    dependencies = {
-      'nvim-tree/nvim-web-devicons',
-    },
-    config = function()
-      require('nvim-tree').setup {
-        view = {
-          side = 'right',
-        },
-      }
-    end,
-  },
-
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -578,18 +583,24 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
+        pyright = {},
+        rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
-        --
+        tsserver = {},
 
+        kotlin_language_server = {},
+        gopls = {
+          settings = {
+            gopls = {
+              gofumpt = true,
+            },
+          },
+        },
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -620,10 +631,13 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         -- Kotlin
-        'kotlin-language-server',
         'kotlin-debug-adapter',
         'ktlint',
         'detekt',
+        -- Go
+        'gofumpt',
+        -- General
+        'ast-grep',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
